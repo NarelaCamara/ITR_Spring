@@ -81,7 +81,7 @@ public class SalvoApplication {
 		salvoRepository.save(shoot3);
 
 		LocalDateTime fecha1 =  LocalDateTime.now().plusHours( 14);
-		float ganador1 = (float) 2.0;
+		float ganador1 = (float) 1.0;
 
 		LocalDateTime fecha2 =  LocalDateTime.now().plusHours( 16);
 		float ganador2 = (float) 0.5;
