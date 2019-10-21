@@ -5,34 +5,36 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 
 @Entity
 public class GamePlayer {
-    //Primary bKey
+    //Primary Key
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private LocalDate fechaDeCreacion;
 
-    //Foreng Key Game
+    //foreign key Game
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
 
-    //Foreng Key Player
+    //foreign key Player
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
     private Player player;
 
-    //Foreng Key Ship
+    //foreign key Ship
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     Set<Ship> ships ;
 
-    //Foreng Key Salvo
+    //foreign key Salvo
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     Set<Salvo> salvos ;
+
 
     //Constructor
     public GamePlayer(){ }
@@ -85,6 +87,10 @@ public class GamePlayer {
         return ships;
     }
 
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
     //ADD SHIPS
     public void addShips(Ship ship) {
         this.ships.add(ship);
@@ -102,11 +108,9 @@ public class GamePlayer {
         return  salvos;
     }
 
-    public void setShips(Set<Ship> ships) {
-        this.ships = ships;
-    }
-
     public void setSalvos(Set<Salvo> salvos) {
         this.salvos = salvos;
     }
+
+
 }

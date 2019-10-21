@@ -29,26 +29,11 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepository;
 
-    @RequestMapping("/games")
-    public List<Map<String,Object>> getAll() {
-        return gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList());
-        }
-
-/*    @RequestMapping("/game_view/{nn}")
-    public Map<String,Object> getPlayerID(@PathVariable long nn) {
-        Map<String, Object> dto = new LinkedHashMap<>();
-      GamePlayer playerChosen= gamePlayerRepository.findById(nn).get();
-      dto.put( "id", playerChosen.getGame().getId());
-      dto.put( "created", playerChosen.getGame().getFechaDeCreacion());
-      dto.put( "gamePlayers", playerChosen.getGame().getGamePlayers()
-      .stream().map(gamePlayer1 -> gamePlayer1.makeGamePlayerDTO()).collect(Collectors.toList()));
-      dto.put( "ships", playerChosen.getShips()
-      .stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
-      return dto;
-    }*/
+    @Autowired
+    private ScoreRepository scoreRepository;
 
     @RequestMapping("/game_view/{nn}")
-    public Map<String,Object> getPlayerID(@PathVariable long nn) {
+    public Map<String,Object> getPlayerAndShipsAndSalvoes(@PathVariable long nn) {
         Map<String, Object> dto = new LinkedHashMap<>();
         GamePlayer playerChosen = gamePlayerRepository.findById(nn).get();
         dto.put("id", playerChosen.getGame().getId());
@@ -62,5 +47,12 @@ public class SalvoController {
         return dto;
     }
 
-
+    @RequestMapping("/games")
+    public Map<String,Object> getAllAndScores() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("player", "Guest");
+         GameRepository gamesAll = gameRepository;
+        dto.put("games", gamesAll.findAll().stream().map(game -> game.makeGameDTO() ));
+        return dto;
+    }
 }

@@ -17,6 +17,8 @@ public class Player {
 
     private String email;
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scores;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
@@ -49,6 +51,9 @@ public class Player {
         dto.put("email", this.getEmail());
         return dto;
     }
+
+    //SCORE
+  //  public Score getScore(Game game){ return game; }
 
 
 }
