@@ -17,7 +17,7 @@ public class SalvoApplication {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 	@Bean
-	public CommandLineRunner initData(GameRepository repositoryGame, PlayerRepository repositoryPlayer, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository) {
+	public CommandLineRunner initData(GameRepository repositoryGame, PlayerRepository repositoryPlayer, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository) {
 		return (args) -> {
 			Player ro = new Player("Roxana.Camara07@gmail.com");
 			Player damo = new Player("Damian.Martilotta@gmail.com");
@@ -62,6 +62,23 @@ public class SalvoApplication {
 			shipRepository.save( potemkin);
 			shipRepository.save( santaMaria);
 
+
+			List<String> localizacion4 = new ArrayList<>();
+			localizacion4.addAll(Arrays.asList("D2", "D3", "D4"));
+
+			List<String> localizacion5 = new ArrayList<>();
+			localizacion5.addAll(Arrays.asList("F5", "F6", "F7"));
+
+			List<String> localizacion6 = new ArrayList<>();
+			localizacion6.addAll(Arrays.asList("A2", "A3", "A4"));
+
+		Salvo shoot1 = new Salvo(gamePlayer1, 1, localizacion4 );
+		Salvo shoot2 = new Salvo(gamePlayer2, 1, localizacion5 );
+		Salvo shoot3 = new Salvo(gamePlayer1, 2, localizacion6 );
+
+		salvoRepository.save(shoot1);
+		salvoRepository.save(shoot2);
+		salvoRepository.save(shoot3);
 
 		};
 	}

@@ -28,7 +28,11 @@ public class GamePlayer {
 
     //Foreng Key Ship
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
-    List<Ship> ships ;
+    Set<Ship> ships ;
+
+    //Foreng Key Salvo
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    Set<Salvo> salvos ;
 
     //Constructor
     public GamePlayer(){ }
@@ -77,7 +81,7 @@ public class GamePlayer {
     }
 
     //Ships List
-    public List<Ship> getShips (){
+    public Set<Ship> getShips (){
         return ships;
     }
 
@@ -93,7 +97,16 @@ public class GamePlayer {
         dto.put("player",this.player.makePlayerDTO());
         return dto;
     }
+    //Salvos
+    public Set<Salvo> getSalvoes (){
+        return  salvos;
+    }
 
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
 
-
+    public void setSalvos(Set<Salvo> salvos) {
+        this.salvos = salvos;
+    }
 }

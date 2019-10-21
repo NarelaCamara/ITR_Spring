@@ -7,39 +7,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Entity
-public class Ship {
+public class Salvo {
 
-    //Primary key
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
     ///Mi foreing key
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
     @ElementCollection
     private List<String> locations;
 
-    //Tipo del Ship
-     private String type; //un crucero, destructor o acorazado
+    //Turno
+    private Integer turno;
 
-    //Constructores
-    public Ship() {
+    //Constructor
+    public Salvo() {
     }
 
-    public Ship(String type, List locations, GamePlayer gamePlayer) {
-        this.type = type;
+    public Salvo(GamePlayer gamePlayer, Integer turno, List<String> locations) {
+        this.gamePlayer = gamePlayer;
+        this.turno = turno;
         this.locations = locations;
-       this.gamePlayer = gamePlayer;
     }
 
-    //Getters and Setters
-    //ID
     public long getId() {
         return id;
     }
@@ -48,16 +44,6 @@ public class Ship {
         this.id = id;
     }
 
-    //Type
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    //GamePlayer
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }
@@ -66,7 +52,6 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    //Locations
     public List<String> getLocations() {
         return locations;
     }
@@ -75,13 +60,19 @@ public class Ship {
         this.locations = locations;
     }
 
-    //DTO
-    public Map<String, Object> makeShipDTO() {
+    public Integer getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Integer turno) {
+        this.turno = turno;
+    }
+
+    public Map<String, Object> makeSalvoDTO() {
         Map<String, Object> dto= new HashMap<>();
-        dto.put("type", this.type );
+        dto.put("player", gamePlayer.getPlayer().getId());
+        dto.put("turn", this.turno );
         dto.put("locations", this.getLocations());
         return dto;
     }
-
-
 }
