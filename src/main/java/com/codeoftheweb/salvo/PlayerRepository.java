@@ -8,7 +8,4 @@ package com.codeoftheweb.salvo;
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Player findByEmail(@Param("email") String email);
-
-
-
 }

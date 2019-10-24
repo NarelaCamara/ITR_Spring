@@ -72,7 +72,7 @@ $('#login-form').on('submit', function (event) {
             })
             .fail(function(data) {
                 console.log("signup failed");
-                 //console.log(data);
+               // console.log(data);
                 $("#username").val("");
                 $("#password").val("");
                 $("#username").focus();

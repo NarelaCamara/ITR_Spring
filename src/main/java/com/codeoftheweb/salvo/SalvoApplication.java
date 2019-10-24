@@ -142,7 +142,6 @@ public class SalvoApplication extends SpringBootServletInitializer {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
 
-
         http.authorizeRequests()
           //      .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/web/**").permitAll()
@@ -153,6 +152,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 .antMatchers("/api/login/").permitAll()
                 .antMatchers("/api/**").hasAuthority("USER")
                 .and()
+
                 .formLogin();
         http.formLogin()
                 .usernameParameter("name")
@@ -187,6 +187,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
     }
 }
 
+////////////////////////////////////////////////////////////////
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {

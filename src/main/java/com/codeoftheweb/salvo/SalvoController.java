@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import java.util.Map;
@@ -69,15 +70,15 @@ public class SalvoController {
             @RequestParam String email, @RequestParam String password) {
 /*email vacio y password vacio se pierde los datos*/
         if (email.isEmpty() || password.isEmpty()) {
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>( makeMap("error" ,"Missing data"), HttpStatus.FORBIDDEN);
         }
 
         if (playerRepository.findByEmail(email) != null) {
-            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>( makeMap("error"," Name already in use"), HttpStatus.FORBIDDEN);
         }
 
         playerRepository.save(new Player(email, passwordEncoder.encode(password)));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(makeMap("error","ok"),HttpStatus.CREATED);
     }
 
 /////////////////////////////METODO PARA HACER UN USUARIO INCOGNITO/NO REGISTRADO //////////////////////////////////////
@@ -102,6 +103,12 @@ public class SalvoController {
     }
 
 
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
 }
 
 
