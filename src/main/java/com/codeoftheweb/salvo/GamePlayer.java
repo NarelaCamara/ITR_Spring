@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 
@@ -43,6 +44,12 @@ public class GamePlayer {
         this.player = player;
         this.game = game;
         this.fechaDeCreacion = LocalDate.now();
+    }
+
+    public GamePlayer(LocalDate fechaDeCreacion, Game game, Player player) {
+        this.fechaDeCreacion = fechaDeCreacion;
+        this.game = game;
+        this.player = player;
     }
 
     //Getters And Setters
@@ -96,13 +103,16 @@ public class GamePlayer {
         this.ships.add(ship);
         ship.setGamePlayer(this);
     }
+
     //DTO
     public Map<String, Object> makeGamePlayerDTO(){
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id",this.id);
+        dto.put("id",this.getId());
         dto.put("player",this.player.makePlayerDTO());
+        dto.put("ships", this.getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
         return dto;
     }
+
     //Salvos
     public Set<Salvo> getSalvoes (){
         return  salvos;

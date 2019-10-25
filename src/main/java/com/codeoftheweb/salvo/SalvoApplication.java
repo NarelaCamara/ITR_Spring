@@ -143,17 +143,13 @@ public class SalvoApplication extends SpringBootServletInitializer {
         protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-          //      .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/web/**").permitAll()
-                .antMatchers("/api/game_view/*").hasAuthority("USER")
+                .antMatchers("/api/game_view").hasAuthority("USER")
                 .antMatchers("*/h2-console/**").permitAll()
                 .antMatchers("/api/games").permitAll()
-                .antMatchers("/api/players").permitAll()
+                .antMatchers("/api/players").hasAuthority("USER")
                 .antMatchers("/api/login/").permitAll()
-                .antMatchers("/api/**").hasAuthority("USER")
-                .and()
-
-                .formLogin();
+                .and().headers().frameOptions().sameOrigin();//allow use of frame to same origin urls
         http.formLogin()
                 .usernameParameter("name")
                 .passwordParameter("pwd")
