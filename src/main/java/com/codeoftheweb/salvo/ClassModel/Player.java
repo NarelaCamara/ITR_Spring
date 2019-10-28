@@ -1,11 +1,9 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.ClassModel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 public class Player {

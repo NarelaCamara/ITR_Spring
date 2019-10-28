@@ -1,9 +1,9 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.Interfaces;
 
+import com.codeoftheweb.salvo.ClassModel.Ship;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-
 @RepositoryRestResource
-public interface GameRepository extends JpaRepository<Game, Long> {
+public interface ShipRepository extends JpaRepository<Ship, Long> {
 }

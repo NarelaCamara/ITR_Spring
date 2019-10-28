@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo;
 
+import com.codeoftheweb.salvo.ClassModel.*;
+import com.codeoftheweb.salvo.Interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -144,10 +146,10 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
         http.authorizeRequests()
                 .antMatchers("/web/**").permitAll()
+                .antMatchers("/api/games").permitAll()
+                .antMatchers("/api/players").permitAll()
                 .antMatchers("/api/game_view").hasAuthority("USER")
                 .antMatchers("*/h2-console/**").permitAll()
-                .antMatchers("/api/games").permitAll()
-                .antMatchers("/api/players").hasAuthority("USER")
                 .antMatchers("/api/login/").permitAll()
                 .and().headers().frameOptions().sameOrigin();//allow use of frame to same origin urls
         http.formLogin()

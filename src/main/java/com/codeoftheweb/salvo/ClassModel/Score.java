@@ -1,5 +1,7 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.ClassModel;
 
+import com.codeoftheweb.salvo.ClassModel.Game;
+import com.codeoftheweb.salvo.ClassModel.Player;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
