@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.ClassModel;
 
-import com.codeoftheweb.salvo.ClassModel.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ public class Salvo {
     private List<String> locations;
 
     //Turno
-    private Integer turno;
+    private Integer turn;
 
     //Constructor
     public Salvo() {
@@ -33,7 +32,7 @@ public class Salvo {
 
     public Salvo(GamePlayer gamePlayer, Integer turno, List<String> locations) {
         this.gamePlayer = gamePlayer;
-        this.turno = turno;
+        this.turn = turno;
         this.locations = locations;
     }
 
@@ -62,18 +61,18 @@ public class Salvo {
     }
 
     public Integer getTurno() {
-        return turno;
+        return turn;
     }
 
     public void setTurno(Integer turno) {
-        this.turno = turno;
+        this.turn = turno;
     }
 
     public Map<String, Object> makeSalvoDTO() {
         Map<String, Object> dto= new HashMap<>();
         dto.put("player", gamePlayer.getPlayer().getId());
-        dto.put("turn", this.turno );
-        dto.put("locations", this.getLocations());
+        dto.put("turn", this.getTurno() );
+        dto.put("salvoLocations", this.getLocations());
         return dto;
     }
 }

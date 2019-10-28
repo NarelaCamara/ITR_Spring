@@ -1,9 +1,6 @@
 package com.codeoftheweb.salvo.Controllers;
 
-import com.codeoftheweb.salvo.ClassModel.Game;
-import com.codeoftheweb.salvo.ClassModel.GamePlayer;
-import com.codeoftheweb.salvo.ClassModel.Player;
-import com.codeoftheweb.salvo.ClassModel.Ship;
+import com.codeoftheweb.salvo.ClassModel.*;
 import com.codeoftheweb.salvo.Interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +17,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-
 public class SalvoController {
 
     @Autowired
@@ -173,8 +169,6 @@ public class SalvoController {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //  / games / players / {gamePlayerId} / ship
-
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships",  method=RequestMethod.POST)
     public ResponseEntity<Object> playerAddShip(Authentication authentication, @PathVariable long gamePlayerId,  @RequestBody Set<Ship> ships ) {
 
@@ -196,10 +190,6 @@ public class SalvoController {
                     , HttpStatus.UNAUTHORIZED);
         }
 
-//        if (gamePlayerChosen.getShips() == null) {
-//            return new ResponseEntity<>(makeMap("error", "Tienes ships!! "), HttpStatus.FORBIDDEN);
-//        }
-
         if (gamePlayerChosen.getShips().size() > 0) {
             return new ResponseEntity<>(makeMap("error", "Tarde! Ya colocaste tus naves, no puedes moverlas mas"), HttpStatus.FORBIDDEN);
         }
@@ -210,6 +200,38 @@ public class SalvoController {
         return new ResponseEntity<>(makeMap("OK", "ATR RE PIOLA"), HttpStatus.CREATED);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos",  method=RequestMethod.POST)
+    public ResponseEntity<Object> playerAddSalvo(Authentication authentication, @PathVariable long gamePlayerId,  @RequestBody Salvo salvo ) {
 
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(makeMap("error", "No eres un player tomatela jajaja")
+                    , HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer gamePlayerChosen = gamePlayerRepository.findById(gamePlayerId).get();
+
+        if (gamePlayerChosen.getPlayer() == null) {
+            return new ResponseEntity<>(makeMap("error", "Que tratas de hacer? Ese gamePlayer no existe!")
+                    , HttpStatus.UNAUTHORIZED);
+        }
+
+        Player player1 = playerRepository.findByEmail(authentication.getName());
+        if (gamePlayerChosen.getPlayer().getId() != player1.getId()) {
+            return new ResponseEntity<>(makeMap("error", "Quieres entrar a los salvos de otro player? >:V tramposo!")
+                    , HttpStatus.UNAUTHORIZED);
+        }
+        Integer turno = gamePlayerChosen.getSalvoes().size() +1;
+        Salvo salvoNew = new Salvo(gamePlayerChosen, turno, salvo.getLocations() );
+    Boolean seRepite = gamePlayerChosen.getSalvoes().stream().anyMatch(salvo1 -> salvo1.getTurno() == salvoNew.getTurno());
+
+    if( seRepite ){
+       return new ResponseEntity<>(makeMap("error", "Ese turno estaba rancio! ya paso!"), HttpStatus.FORBIDDEN);
     }
+
+    gamePlayerChosen.addSalvo(salvoNew);
+    salvoRepository.save(salvoNew);
+    return new ResponseEntity<>(makeMap("OK", "ATR RE PIOLA LOS SALVOS"), HttpStatus.CREATED);
+    }
+}

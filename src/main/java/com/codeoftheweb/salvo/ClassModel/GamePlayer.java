@@ -100,7 +100,19 @@ public class GamePlayer {
     //ADD SHIPS
     public void addShips(Ship ship) {
         this.ships.add(ship);
-        ship.setGamePlayer(this);
+    }
+
+    ///SALVOS
+    public Set<Salvo> getSalvoes() {
+        return salvos;
+    }
+
+    public void addSalvo(Salvo salvo) {
+        salvos.add(salvo);
+    }
+
+    public void setSalvos(Set<Salvo> salvos) {
+        this.salvos = salvos;
     }
 
     //DTO
@@ -112,14 +124,6 @@ public class GamePlayer {
         return dto;
     }
 
-    //Salvos
-    public Set<Salvo> getSalvoes (){
-        return  salvos;
-    }
-
-    public void setSalvos(Set<Salvo> salvos) {
-        this.salvos = salvos;
-    }
 
 
 }
