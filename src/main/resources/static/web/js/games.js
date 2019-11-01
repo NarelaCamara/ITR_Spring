@@ -45,7 +45,9 @@ $('#login-form').on('submit', function (event) {
             { email: $("#username").val(),
                 password: $("#password").val() })
             .done(function(data) {
+                $("#createGameForm").show();
                 console.log("signup ok");
+
                 console.log(data);
                 $('#signupSuccess').show( "slow" ).delay(2000).hide( "slow" );
                 $.post("/api/login",

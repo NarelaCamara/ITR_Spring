@@ -120,10 +120,51 @@ public class GamePlayer {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id",this.getId());
         dto.put("player",this.player.makePlayerDTO());
-        dto.put("ships", this.getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
         return dto;
     }
 
+    //Encuentra al rival del game qu esta jugando///////////////////////////////////////////////////////////////////////
+    public GamePlayer findOpponent() {
+        GamePlayer  gp = this.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId()!= this.getId()).findFirst().orElse(null);
+        return gp;
+    }
 
+    ///////estado del gameplayer en el game
+    public String stateGame() {
+         if(this.getShips().isEmpty() )
+              return "PLACESHIPS";
+         if(   this.findOpponent() == null  )
+            return "WAITINGFOROPP";
+        if(   this.findOpponent().getShips().isEmpty()  )
+            return "WAIT";
+        if(   !this.findOpponent().getShips().isEmpty()  && !this.getShips().isEmpty() )
+            return "PLAY";
+        ////Hacerrr
+//        if( this.estadoDelGame() == "WON"  )
+//            return "WON";
+//        if( this.findOpponent().estadoDelGame() == "WON"  )
+//            return "LOST";
+//        if( this.estadoDelGame() == "TIE" && this.findOpponent().estadoDelGame() == "TIE" )
+//            return "TIE";
+//        //ACA ESPERA EL SALVO
+//        if( this.estadoDelGame() == "AGAIN")
+//            return "WAIT";
+
+//        return  "tu vieja";
+//    }
+//
+//    private String estadoDelGame() {
+//        GamePlayer rivalSalvos = (GamePlayer) this.findOpponent().getSalvoes();
+//        this.getShips().forEach(ship -> { Integer total = ship.devuelveLosHitsQueRecibio(); } );
+
+        return "TIE";
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

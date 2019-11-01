@@ -1,12 +1,9 @@
 package com.codeoftheweb.salvo.ClassModel;
 
-import com.codeoftheweb.salvo.ClassModel.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Entity
@@ -76,13 +73,58 @@ public class Ship {
         this.locations = locations;
     }
 
-    //DTO
+    //DTO///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Map<String, Object> makeShipDTO() {
         Map<String, Object> dto= new HashMap<>();
         dto.put("type", this.type );
         dto.put("locations", this.getLocations());
         return dto;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Devuelve una lista de Strings de locaciones que le pego a ese ship */
+    public List<String> devuelveLosHitsQueRecibio(List<String> locationsSalvo) {
+        List<String> eseHitMePego = new ArrayList<>();
+                for( String  location : locationsSalvo  ){
+                    if(this.esaLocacionMePego(location)){
+                        eseHitMePego.add(location);
+                    }
+                }
+        return eseHitMePego;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*Devuelve un booleano si esa locacion le dio a ese ship*/
+    public boolean esaLocacionMePego(String location1) {
+        for ( String location : locations){
+           if( location1 == location) {
+               return true;
+           }
+        }
+        return false;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //sacar un {}
+    public Map<String, Object> devuelveDamages(Salvo salvo) {
+        Map<String, Object> dto= new HashMap<>();
+        dto.put(this.getType()+"Hits", (this.devuelveLosHitsQueRecibio(salvo.getLocations())).size() );
+        dto.put( this.getType(), this.devuelveTodosLosHitsQueRecibio(salvo.getGamePlayer().getSalvoes()) );
+        return dto;
+    }
+
+
+
+    public Integer devuelveTodosLosHitsQueRecibio(Set<Salvo> salvoes) {
+        List<String> totalDeGolpes = new ArrayList<>();
+        for( Salvo salvo : salvoes ) {
+            totalDeGolpes.addAll(this.devuelveLosHitsQueRecibio( salvo.getLocations()));
+        }
+        return totalDeGolpes.size();
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 }
