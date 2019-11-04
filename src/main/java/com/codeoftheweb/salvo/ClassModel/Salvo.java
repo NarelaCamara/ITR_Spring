@@ -1,11 +1,8 @@
 package com.codeoftheweb.salvo.ClassModel;
 
-
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.*;
-
 
 @Entity
 public class Salvo {
@@ -23,10 +20,10 @@ public class Salvo {
     @ElementCollection
     private List<String> salvoLocations;
 
-    //Turno
+    //Turn
     private Integer turn ;
 
-    //Constructor
+    //Constructor///////////////////////////////////////////////////////////////////////////////////////////////////////
     public Salvo() {
     }
     public Salvo(GamePlayer gamePlayer, Integer turn,  List<String> locations) {
@@ -35,6 +32,7 @@ public class Salvo {
         this.salvoLocations = locations;
     }
 
+    ///GETTERS ANS SETTERS//////////////////////////////////////////////////////////////////////////////////////////////
     public Integer getTurn(Integer turn) {
         return this.turn;
     }
@@ -67,11 +65,7 @@ public class Salvo {
         this.salvoLocations = salvoLocations;
     }
 
-
-    public void setTurno(Integer turno) {
-        this.turn = turno;
-    }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Map<String, Object> makeSalvoDTO() {
         Map<String, Object> dto= new HashMap<>();
        dto.put("player", gamePlayer.getPlayer().getId());
@@ -99,7 +93,7 @@ public class Salvo {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*Los salvos que dieron en el blanco*/
+    /*Los salvos que dieron en el blanco*/
     public List<String> locationsHits(Set<Ship> ships) {
         List<String> todoLosHitsQuePegaron = new ArrayList<>();
         for ( String locacion : salvoLocations){
@@ -111,7 +105,7 @@ public class Salvo {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*Cantidad de Locaciones que no dieron en el blanco*/
+    /*Cantidad de Locaciones que no dieron en el blanco*/
     public Integer locationsMissed( Set<Ship> ships) {
      return this.getSalvoLocations().size() - this.locationsHits( ships).size();
     }

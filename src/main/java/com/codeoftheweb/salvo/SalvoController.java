@@ -48,13 +48,12 @@ public class SalvoController {
         return map;
     }
 
-    /////////////////////////////METODO PARA HACER UN USUARIO INCOGNITO/NO REGISTRADO //////////////////////////////////
+    /////////////////////////////METODO PARA HACER UN USUARIO NO REGISTRADO //////////////////////////////////
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Object> createGame(Authentication authentication) {
@@ -91,7 +90,6 @@ public class SalvoController {
     }
 
     ///////////////////LOOGUING/////////////////////////////////////////////////////////////////////////////////////////
-
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(@RequestParam String email, @RequestParam String password) {
         /*email vacio y password vacio se pierde los datos*/
@@ -106,7 +104,6 @@ public class SalvoController {
         playerRepository.save(new Player(email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(makeMap("ok", "ok"), HttpStatus.CREATED);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @RequestMapping(path = "/game/{gameId}/players", method = RequestMethod.POST)
@@ -207,21 +204,18 @@ public class SalvoController {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     @RequestMapping(path ="/game_view/{id_gp}")
     public ResponseEntity<Object> gamePlayer1(Authentication authentication, @PathVariable Long id_gp) {
-
         if (isGuest(authentication)) {
             return new ResponseEntity<>(makeMap("error", "No eres un player tomatela jajaja")
                     , HttpStatus.UNAUTHORIZED);
         }
 
-
         Player player = playerRepository.findByEmail( authentication.getName() );
 
         GamePlayer gamePlayerChosen = gamePlayerRepository.findById(id_gp).orElse(null);
 
-        if (player == null && gamePlayerChosen == null) {
+        if (player == null || gamePlayerChosen == null) {
             return new ResponseEntity<>(makeMap("error", "Problemas o eres un player o gameplayer inexistente"), HttpStatus.UNAUTHORIZED);
         }
         if (gamePlayerChosen.getPlayer().getId() != player.getId()) {
@@ -229,14 +223,11 @@ public class SalvoController {
                     , HttpStatus.UNAUTHORIZED);
         }
 
-
-
         Map<String, Object> dto = new LinkedHashMap<>();
 
         dto.put("id", gamePlayerChosen.getGame().getId());
         dto.put("created", gamePlayerChosen.getGame().getFechaDeCreacion());
 
-        //////////////ACA ESTOY///////////
         dto.put("gameState", stateGame(gamePlayerChosen));
 
         dto.put("gamePlayers", gamePlayerChosen.getGame().getGamePlayers()
@@ -246,8 +237,6 @@ public class SalvoController {
         dto.put("salvoes", gamePlayerChosen.getSalvoes()
                 .stream().map(salvo -> salvo.makeSalvoDTO()).collect(toList()));
         dto.put("hits",  makeHits( gamePlayerChosen));
-
-
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -269,7 +258,6 @@ public class SalvoController {
         return dto;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////estado del gameplayer en el game////////////////////////////////////////////////
     private String stateGame( GamePlayer gameplayer) {
@@ -285,7 +273,7 @@ public class SalvoController {
             return "WAITINGFOROPP";
         }
 
-        //Si ambos no tinen salvos entonces agreguelos!
+        //Si ambos no tinen salvos entonces agreguenlos!
         if ( gameplayer.getSalvoes().isEmpty()) {
             return "PLAY";
         }
@@ -301,35 +289,36 @@ public class SalvoController {
                 && gameplayer.getShips().size() == gameplayer.cantidadDeShipsDadosDeBaja()) {
             floatNumber = (float) 0.0;
           saveScoreNotRepeat(floatNumber, gameplayer );
-
-            return "TIE"; //empataron!
+            return "TIE";
         }
 
         //Si la cantidad de ships del enemigo es igual a su cantidad de ships dados de baja entonces GANASTE
         if (gameplayer.findOpponent().getShips().size() == gameplayer.findOpponent().cantidadDeShipsDadosDeBaja()) {
             floatNumber = (float) 1.0;
             saveScoreNotRepeat(floatNumber,gameplayer );
-
-            return "WON"; //Ganaste!
+            return "WON";
         }
 
         //Si la cantidad e salvos tuyos y tu cantidad de ships es igual entonces PERDISTE
         if (gameplayer.getShips().size() == gameplayer.cantidadDeShipsDadosDeBaja() &&  gameplayer.getSalvoes().size() > 0) {
             floatNumber = (float) 0.0;
             saveScoreNotRepeat(floatNumber, gameplayer );
-
-            return "LOST"; //perdiste!
+            return "LOST";
         }
 
         //Si no se da ninguno de esos casos juegen
         return "PLAY";
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void saveScoreNotRepeat(float floatNumber, GamePlayer gameplayer) {
         if ( ! eseGameYaHaSidoGuardado(gameplayer.getGame()) ) {
           scoreRepository.save(new Score(gameplayer.getGame(), gameplayer.getPlayer(), floatNumber, LocalDateTime.now()) );
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private boolean eseGameYaHaSidoGuardado(Game game) {
         return scoreRepository.findAll().stream().filter(score -> score.getGame().getId() == game.getId() ).count() >= 2 ;

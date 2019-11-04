@@ -26,7 +26,7 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     private List<Score> scores;
 
-    //Constructor
+    //Constructor///////////////////////////////////////////////////////////////////////////////////////////////////////
     public Game() {
         this.fechaDeCreacion =  LocalDateTime.now();
     }
@@ -35,7 +35,7 @@ public class Game {
         this.fechaDeCreacion = fechaDeCreacion ;
     }
 
-    //Getters AND Setters
+    //Getters AND Setters///////////////////////////////////////////////////////////////////////////////////////////////
     public LocalDateTime getFechaDeCreacion() {
         return fechaDeCreacion;
     }
@@ -68,7 +68,7 @@ public class Game {
         this.gamePlayers = gamePlayers;
     }
 
-    //DTO
+   //DTO/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    public Map<String, Object> makeGameDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
@@ -77,9 +77,6 @@ public class Game {
         dto.put("scores", this.getScores().stream().map(score -> score.makeScoreDTO())) ;
         return dto;
    }
-
-
-
 
 }
 

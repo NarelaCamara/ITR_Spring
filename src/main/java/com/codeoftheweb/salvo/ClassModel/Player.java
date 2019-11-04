@@ -22,7 +22,7 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
-    ///Constructor///////////
+    ///Constructor//////////////////////////////////////////////////////////////////////////////////////////////////////
     public Player() { }
 
     public Player(String email, String password) {
@@ -30,7 +30,7 @@ public class Player {
         this.password= password;
     }
 
-    //GETTERS AND SETTERS
+    //GETTERS AND SETTERS///////////////////////////////////////////////////////////////////////////////////////////////
     public String getEmail() {
         return email;
     }
@@ -63,14 +63,12 @@ public class Player {
         this.scores = scores;
     }
 
-    ///DTO
+    ///DTO//////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Map<String, Object> makePlayerDTO(){
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id",this.getId());
         dto.put("email", this.getEmail());
         return dto;
     }
-
-    //SCORE public Score getScore(Game game){ return game; }
 
 }

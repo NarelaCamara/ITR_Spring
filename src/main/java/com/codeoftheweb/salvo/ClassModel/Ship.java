@@ -26,7 +26,7 @@ public class Ship {
     //Tipo del Ship
      private String type; //un crucero, destructor o acorazado
 
-    //Constructores
+    //Constructores/////////////////////////////////////////////////////////////////////////////////////////////////////
     public Ship() {
     }
 
@@ -36,8 +36,7 @@ public class Ship {
        this.gamePlayer = gamePlayer;
     }
 
-    //Getters and Setters
-    //ID
+    //Getters and Setters////////////////////////////////////////////////////////////////////////////////////////////////
     public long getId() {
         return id;
     }
@@ -46,7 +45,6 @@ public class Ship {
         this.id = id;
     }
 
-    //Type
     public String getType() {
         return type;
     }
@@ -55,7 +53,6 @@ public class Ship {
         this.type = type;
     }
 
-    //GamePlayer
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }
@@ -64,7 +61,6 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    //Locations
     public List<String> getLocations() {
         return locations;
     }
@@ -82,7 +78,7 @@ public class Ship {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* Devuelve una lista de Strings de locaciones que le pego a ese ship */
+    /* Devuelve una lista de Strings de locaciones que le pego a ese ship */
     public List<String> devuelveLosHitsQueRecibio(List<String> locationsSalvo) {
         List<String> eseHitMePego = new ArrayList<>();
                 for( String  location : locationsSalvo  ){
@@ -113,7 +109,7 @@ public class Ship {
         return dto;
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public Integer devuelveTodosLosHitsQueRecibio(Set<Salvo> salvoes) {
         List<String> totalDeGolpes = new ArrayList<>();
@@ -123,15 +119,12 @@ public class Ship {
         return totalDeGolpes.size();
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean shipRIP(Set<Salvo> salvoes) {
         List<String> locacionesQueDieronAlBlanco = new ArrayList<>();
         salvoes.forEach(salvo -> locacionesQueDieronAlBlanco.addAll(salvo.locationsHits(gamePlayer.getShips() )  ) );
         return this.devuelveLosHitsQueRecibio(locacionesQueDieronAlBlanco ).size() == this.getLocations().size();
     }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 }

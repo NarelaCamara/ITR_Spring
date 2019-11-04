@@ -1,9 +1,6 @@
 package com.codeoftheweb.salvo.ClassModel;
 
-import com.codeoftheweb.salvo.ClassModel.Game;
-import com.codeoftheweb.salvo.ClassModel.Player;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -26,11 +23,10 @@ public class Score {
     @JoinColumn(name="player_id")
     private Player player;
 
-    ///PUEDE CAMBIAR
     private float score;
     private LocalDateTime finishDate;
 
-    //Constructor
+    //Constructor///////////////////////////////////////////////////////////////////////////////////////////////////////
     public Score(){}
 
     public Score(Game game, Player player, float score, LocalDateTime finishDate ){
@@ -39,7 +35,7 @@ public class Score {
         this.score = score;
         this.finishDate = finishDate;
     }
-
+    /////GETTERS AND SETTERS////////////////////////////////////////////////////////////////////////////////////////////
     public long getId() {
         return id;
     }
@@ -80,7 +76,7 @@ public class Score {
         this.finishDate = finishDate;
     }
 
-    //DTO
+    //DTO///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Map<String, Object> makeScoreDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("player", player.getId());
@@ -88,6 +84,5 @@ public class Score {
         dto.put("finishDate", this.getFinishDate());
         return dto;
     }
-
 
 }
