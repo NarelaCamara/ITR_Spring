@@ -19,25 +19,26 @@ public class GamePlayer {
 
     //foreign key Game
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="game_id")
+    @JoinColumn(name = "game_id")
     private Game game;
 
     //foreign key Player
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="player_id")
+    @JoinColumn(name = "player_id")
     private Player player;
 
     //foreign key Ship
-    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
-    Set<Ship> ships ;
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    Set<Ship> ships = new HashSet<>();
 
     //foreign key Salvo
-    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
-    Set<Salvo> salvos ;
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    Set<Salvo> salvos =  new HashSet<>();
 
 
     //Constructor
-    public GamePlayer(){ }
+    public GamePlayer() {
+    }
 
     public GamePlayer(Player player, Game game) {
         this.player = player;
@@ -89,7 +90,7 @@ public class GamePlayer {
     }
 
     //Ships List
-    public Set<Ship> getShips (){
+    public Set<Ship> getShips() {
         return ships;
     }
 
@@ -115,55 +116,28 @@ public class GamePlayer {
         this.salvos = salvos;
     }
 
-    //DTO
-    public Map<String, Object> makeGamePlayerDTO(){
+    //DTO////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id",this.getId());
-        dto.put("player",this.player.makePlayerDTO());
+        dto.put("id", this.getId());
+        dto.put("player", this.player.makePlayerDTO());
         return dto;
     }
 
     //Encuentra al rival del game qu esta jugando///////////////////////////////////////////////////////////////////////
     public GamePlayer findOpponent() {
-        GamePlayer  gp = this.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId()!= this.getId()).findFirst().orElse(null);
+        GamePlayer gp = this.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != this.getId()).findFirst().orElse(null);
         return gp;
     }
 
-    ///////estado del gameplayer en el game
-    public String stateGame() {
-         if(this.getShips().isEmpty() )
-              return "PLACESHIPS";
-         if(   this.findOpponent() == null  )
-            return "WAITINGFOROPP";
-        if(   this.findOpponent().getShips().isEmpty()  )
-            return "WAIT";
-        if(   !this.findOpponent().getShips().isEmpty()  && !this.getShips().isEmpty() )
-            return "PLAY";
-        ////Hacerrr
-//        if( this.estadoDelGame() == "WON"  )
-//            return "WON";
-//        if( this.findOpponent().estadoDelGame() == "WON"  )
-//            return "LOST";
-//        if( this.estadoDelGame() == "TIE" && this.findOpponent().estadoDelGame() == "TIE" )
-//            return "TIE";
-//        //ACA ESPERA EL SALVO
-//        if( this.estadoDelGame() == "AGAIN")
-//            return "WAIT";
 
-//        return  "tu vieja";
-//    }
-//
-//    private String estadoDelGame() {
-//        GamePlayer rivalSalvos = (GamePlayer) this.findOpponent().getSalvoes();
-//        this.getShips().forEach(ship -> { Integer total = ship.devuelveLosHitsQueRecibio(); } );
 
-        return "TIE";
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public long cantidadDeShipsDadosDeBaja() {
+       return this.getShips().stream().filter( ship -> ship.shipRIP(this.findOpponent().getSalvoes() )  ).count();
     }
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

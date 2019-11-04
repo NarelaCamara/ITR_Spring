@@ -1,11 +1,11 @@
 package com.codeoftheweb.salvo.ClassModel;
 
-import org.apache.logging.log4j.util.Strings;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Entity
 public class Salvo {
@@ -21,7 +21,7 @@ public class Salvo {
     private GamePlayer gamePlayer;
 
     @ElementCollection
-    private List<String> locations;
+    private List<String> salvoLocations;
 
     //Turno
     private Integer turn ;
@@ -32,15 +32,16 @@ public class Salvo {
     public Salvo(GamePlayer gamePlayer, Integer turn,  List<String> locations) {
         this.gamePlayer = gamePlayer;
         this.turn =  turn;
-        this.locations = locations;
+        this.salvoLocations = locations;
     }
 
-//    public Salvo(GamePlayer gamePlayer,  List<String> locations) {
-//        this.gamePlayer = gamePlayer;
-//        this.turn =  gamePlayer.getSalvoes().size();
-//        this.locations = locations;
-//    }
+    public Integer getTurn(Integer turn) {
+        return this.turn;
+    }
 
+    public void setTurn(Integer turn) {
+        this.turn = turn;
+    }
 
     public long getId() {
         return id;
@@ -58,17 +59,14 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public List<String> getLocations() {
-        return locations;
+    public List<String> getSalvoLocations() {
+        return salvoLocations;
     }
 
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
+    public void setSalvoLocations(List<String> salvoLocations) {
+        this.salvoLocations = salvoLocations;
     }
 
-    public Integer getTurno() {
-        return turn;
-    }
 
     public void setTurno(Integer turno) {
         this.turn = turno;
@@ -77,15 +75,15 @@ public class Salvo {
     public Map<String, Object> makeSalvoDTO() {
         Map<String, Object> dto= new HashMap<>();
        dto.put("player", gamePlayer.getPlayer().getId());
-        dto.put("turn", this.getTurno() );
-        dto.put("salvoLocations", this.getLocations());
+        dto.put("turn", this.getTurn(turn) );
+        dto.put("locations", this.getSalvoLocations());
         return dto;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Map<String, Object> makeTurn(Set<Ship> ships) {
-        Map<String, Object> dto= new HashMap<>();
-        dto.put("turn", this.getTurno());
+        Map<String, Object> dto= new LinkedHashMap<>();
+        dto.put("turn", this.getTurn(turn));
         dto.put("hitLocations", this.locationsHits(ships) );
         dto.put("damages", this.getDamages(ships));
         dto.put("missed", this.locationsMissed(ships) );
@@ -95,7 +93,7 @@ public class Salvo {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    public   Map<String, Object> getDamages(Set<Ship> ships) {
         Map<String, Object> dto= new LinkedHashMap<>();
-        ships.forEach(ship -> dto.put(ship.getType(), ship.devuelveLosHitsQueRecibio(this.getLocations()).size() ));
+        ships.forEach(ship -> dto.put(ship.getType(), ship.devuelveLosHitsQueRecibio(this.getSalvoLocations()).size() ));
         ships.forEach(ship -> dto.put(ship.getType()+"Hits",  ship.devuelveTodosLosHitsQueRecibio(this.getGamePlayer().getSalvoes())));
         return dto;
     }
@@ -104,7 +102,7 @@ public class Salvo {
 /*Los salvos que dieron en el blanco*/
     public List<String> locationsHits(Set<Ship> ships) {
         List<String> todoLosHitsQuePegaron = new ArrayList<>();
-        for ( String locacion : locations  ){
+        for ( String locacion : salvoLocations){
             if(   ships.stream().anyMatch(ship -> ship.esaLocacionMePego(locacion) ) ){
                 todoLosHitsQuePegaron.add(locacion);
             }
@@ -115,7 +113,7 @@ public class Salvo {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*Cantidad de Locaciones que no dieron en el blanco*/
     public Integer locationsMissed( Set<Ship> ships) {
-     return this.getLocations().size() - this.locationsHits( ships).size();
+     return this.getSalvoLocations().size() - this.locationsHits( ships).size();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -168,7 +166,7 @@ public class SalvoController {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos",  method=RequestMethod.POST)
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes",  method=RequestMethod.POST)
     public ResponseEntity<Object> playerAddSalvo(Authentication authentication, @PathVariable long gamePlayerId,  @RequestBody Salvo salvo ) {
 
         if (isGuest(authentication)) {
@@ -188,11 +186,14 @@ public class SalvoController {
             return new ResponseEntity<>(makeMap("error", "Quieres entrar a los salvos de otro player? >:V tramposo!")
                     , HttpStatus.UNAUTHORIZED);
         }
-//        Integer turno = gamePlayerChosen.getSalvoes().size() +1;
-//        Salvo salvoNew = new Salvo(gamePlayerChosen, turno, salvo.getLocations() );
-    Boolean seRepite = gamePlayerChosen.getSalvoes().stream().anyMatch(salvo1 -> salvo1.getTurno() ==  gamePlayerChosen.getSalvoes().size() );
 
-    if( seRepite ){
+       Integer turno = gamePlayerChosen.getSalvoes().size() +1;
+        salvo.setGamePlayer(gamePlayerChosen);
+        salvo.setTurn(turno);
+
+        Salvo salvoNew = new Salvo(gamePlayerChosen, turno, salvo.getSalvoLocations() );
+
+    if( gamePlayerChosen.getSalvoes().size() == salvoNew.getTurn(turno) ){
        return new ResponseEntity<>(makeMap("error", "Ese turno estaba rancio! ya paso!"), HttpStatus.FORBIDDEN);
     }
 
@@ -200,7 +201,7 @@ public class SalvoController {
          return new ResponseEntity<>(makeMap("error", " ¿¿WTF??"), HttpStatus.FORBIDDEN);
     }
 
-//    salvoRepository.save(salvoNew);
+    salvoRepository.save(salvo);
     return new ResponseEntity<>(makeMap("OK", "ATR RE PIOLA LOS SALVOS"), HttpStatus.CREATED);
     }
 
@@ -228,14 +229,15 @@ public class SalvoController {
                     , HttpStatus.UNAUTHORIZED);
         }
 
+
+
         Map<String, Object> dto = new LinkedHashMap<>();
 
         dto.put("id", gamePlayerChosen.getGame().getId());
         dto.put("created", gamePlayerChosen.getGame().getFechaDeCreacion());
 
         //////////////ACA ESTOY///////////
-        dto.put("gameState", gamePlayerChosen.stateGame());
-
+        dto.put("gameState", stateGame(gamePlayerChosen));
 
         dto.put("gamePlayers", gamePlayerChosen.getGame().getGamePlayers()
                 .stream().map(gamePlayer1 -> gamePlayer1.makeGamePlayerDTO()).collect(toList()));
@@ -244,6 +246,8 @@ public class SalvoController {
         dto.put("salvoes", gamePlayerChosen.getSalvoes()
                 .stream().map(salvo -> salvo.makeSalvoDTO()).collect(toList()));
         dto.put("hits",  makeHits( gamePlayerChosen));
+
+
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -267,9 +271,69 @@ public class SalvoController {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////estado del gameplayer en el game////////////////////////////////////////////////
+    private String stateGame( GamePlayer gameplayer) {
+        float floatNumber = 0;
 
+        //Si no tienes ships tienes que agregarlos
+        if (gameplayer.getShips().isEmpty()) {
+            return "PLACESHIPS";
+        }
 
+        //Si ya los pusiste a los ships tenes que esperar a tu oponente o si el oponente no tiene ships esperalo
+        if (gameplayer.findOpponent() == null || gameplayer.findOpponent().getShips().isEmpty()) {
+            return "WAITINGFOROPP";
+        }
 
+        //Si ambos no tinen salvos entonces agreguelos!
+        if ( gameplayer.getSalvoes().isEmpty()) {
+            return "PLAY";
+        }
+
+        //Si la cantidad de  salvos  es difertente entonces espera a tu enemigo
+        if ( gameplayer.findOpponent().getSalvoes().size() < gameplayer.getSalvoes().size()   ) {
+            return "WAIT";
+        }
+
+        //Si la cantidad de ships del oponente es igual a la cantidad de ships que fueron dados de baja y
+        //tu cantidad e ships dados de baja es igual a la cantidad de ship que tenes entonces EMPATE
+        if (gameplayer.findOpponent().getShips().size() == gameplayer.findOpponent().cantidadDeShipsDadosDeBaja()
+                && gameplayer.getShips().size() == gameplayer.cantidadDeShipsDadosDeBaja()) {
+            floatNumber = (float) 0.0;
+          saveScoreNotRepeat(floatNumber, gameplayer );
+
+            return "TIE"; //empataron!
+        }
+
+        //Si la cantidad de ships del enemigo es igual a su cantidad de ships dados de baja entonces GANASTE
+        if (gameplayer.findOpponent().getShips().size() == gameplayer.findOpponent().cantidadDeShipsDadosDeBaja()) {
+            floatNumber = (float) 1.0;
+            saveScoreNotRepeat(floatNumber,gameplayer );
+
+            return "WON"; //Ganaste!
+        }
+
+        //Si la cantidad e salvos tuyos y tu cantidad de ships es igual entonces PERDISTE
+        if (gameplayer.getShips().size() == gameplayer.cantidadDeShipsDadosDeBaja() &&  gameplayer.getSalvoes().size() > 0) {
+            floatNumber = (float) 0.0;
+            saveScoreNotRepeat(floatNumber, gameplayer );
+
+            return "LOST"; //perdiste!
+        }
+
+        //Si no se da ninguno de esos casos juegen
+        return "PLAY";
+    }
+
+    private void saveScoreNotRepeat(float floatNumber, GamePlayer gameplayer) {
+        if ( ! eseGameYaHaSidoGuardado(gameplayer.getGame()) ) {
+          scoreRepository.save(new Score(gameplayer.getGame(), gameplayer.getPlayer(), floatNumber, LocalDateTime.now()) );
+        }
+    }
+
+    private boolean eseGameYaHaSidoGuardado(Game game) {
+        return scoreRepository.findAll().stream().filter(score -> score.getGame().getId() == game.getId() ).count() >= 2 ;
+    }
 
 }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

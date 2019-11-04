@@ -106,10 +106,9 @@ public class Ship {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //sacar un {}
     public Map<String, Object> devuelveDamages(Salvo salvo) {
         Map<String, Object> dto= new HashMap<>();
-        dto.put(this.getType()+"Hits", (this.devuelveLosHitsQueRecibio(salvo.getLocations())).size() );
+        dto.put(this.getType()+"Hits", (this.devuelveLosHitsQueRecibio(salvo.getSalvoLocations())).size() );
         dto.put( this.getType(), this.devuelveTodosLosHitsQueRecibio(salvo.getGamePlayer().getSalvoes()) );
         return dto;
     }
@@ -119,10 +118,18 @@ public class Ship {
     public Integer devuelveTodosLosHitsQueRecibio(Set<Salvo> salvoes) {
         List<String> totalDeGolpes = new ArrayList<>();
         for( Salvo salvo : salvoes ) {
-            totalDeGolpes.addAll(this.devuelveLosHitsQueRecibio( salvo.getLocations()));
+            totalDeGolpes.addAll(this.devuelveLosHitsQueRecibio( salvo.getSalvoLocations()));
         }
         return totalDeGolpes.size();
     }
+
+
+    public boolean shipRIP(Set<Salvo> salvoes) {
+        List<String> locacionesQueDieronAlBlanco = new ArrayList<>();
+        salvoes.forEach(salvo -> locacionesQueDieronAlBlanco.addAll(salvo.locationsHits(gamePlayer.getShips() )  ) );
+        return this.devuelveLosHitsQueRecibio(locacionesQueDieronAlBlanco ).size() == this.getLocations().size();
+    }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
