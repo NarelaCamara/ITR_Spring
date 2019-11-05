@@ -158,7 +158,7 @@ public class SalvoController {
         ships.forEach(ship -> ship.setGamePlayer(gamePlayerChosen));
         shipRepository.saveAll( ships);
 
-        return new ResponseEntity<>(makeMap("OK", "ATR RE PIOLA"), HttpStatus.CREATED);
+        return new ResponseEntity<>(makeMap("OK", "ATR! Carga esos salvos "), HttpStatus.CREATED);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,10 +216,10 @@ public class SalvoController {
         GamePlayer gamePlayerChosen = gamePlayerRepository.findById(id_gp).orElse(null);
 
         if (player == null || gamePlayerChosen == null) {
-            return new ResponseEntity<>(makeMap("error", "Problemas o eres un player o gameplayer inexistente"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMap("error", "Problemas eres player inexistente"), HttpStatus.UNAUTHORIZED);
         }
         if (gamePlayerChosen.getPlayer().getId() != player.getId()) {
-            return new ResponseEntity<>(makeMap("error", "No seas tramposo, eres un player pero no el que dices e.e")
+            return new ResponseEntity<>(makeMap("error", "No seas tramposo, si eres un player pero no el que dices ser e.e")
                     , HttpStatus.UNAUTHORIZED);
         }
 
@@ -245,12 +245,12 @@ public class SalvoController {
     private Map<String, Object>makeHits(GamePlayer gamePlayerChosen) {
         Map<String, Object> dto = new LinkedHashMap<>();
             GamePlayer rival = gamePlayerChosen.findOpponent();
-            List <Map<String, Object>> self = new ArrayList<Map<String, Object>>();
+            List <Map<String, Object>> vacio = new ArrayList<Map<String, Object>>();
 
-            /*EL DTO VACIO su razon de estar es porque el front  pide leer una lista con self y opponent */
+            /*EL DTO VACIO: Su razon de estar es porque el front  pide leer una lista de self y opponent */
             if (rival == null ){
-                dto.put("self", self);
-                dto.put("opponent",self);
+                dto.put("self", vacio);
+                dto.put("opponent",vacio);
             }else{
             dto.put("self", rival.getSalvoes().stream().map(salvo -> salvo.makeTurn(gamePlayerChosen.getShips())));
             dto.put("opponent", gamePlayerChosen.getSalvoes().stream().map(salvo -> salvo.makeTurn(rival.getShips())));
